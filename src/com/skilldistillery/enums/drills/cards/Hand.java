@@ -8,10 +8,7 @@ public abstract class Hand {
 	private String name;
 
 	
-	
-	/**
-	 * @return the card
-	 */
+
 	public List<Card> getCard() {
 		return card;
 	}
@@ -51,6 +48,18 @@ public abstract class Hand {
 		this.cardValue = cardValue;
 	}
 
-
-
+	public boolean is21() {
+		if (this.cardValue == 21) {
+			System.out.println(getName()+ " Wins!");
+			return true;
+		}
+		return false;
+	}
+	public boolean checkForBust() {
+			if (cardValue > 21) {
+				System.out.println(cardValue + " pts." + getName() + " has gone over!");
+				return true;
+			}
+			return false;
+		}
 }

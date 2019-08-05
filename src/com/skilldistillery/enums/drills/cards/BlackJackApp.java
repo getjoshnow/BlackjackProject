@@ -32,18 +32,24 @@ public class BlackJackApp {
 			deck.shuffle();
 			player.setCardValue(0); // reset
 			dealer.setCardValue(0); // reset
+			player.setMoney(100);
 
 			player = dealTwoCards(deck);
 			dealer = dealTwoCardsDealer(deck);
 			dealer.setName("Casino Dealer");
 			player.setName(name);
-
+			
+			System.out.println(deck.checkDeckSize());
+			
+			
 			System.out.println(player.getName() + " is dealt:");
 			Dealing.printHandAndValue(player.getCard(), player.getCardValue());
+			
 			System.out.println(dealer.getName()+" is dealt:");
 			Dealing.printHandAndValue(dealer.getCard(), dealer.getCardValue());
-			userWin = checkFor21(player.getCardValue(), player);
-			dealerWon = checkFor21(dealer.getCardValue(), dealer);
+			
+			userWin = player.is21();
+			dealerWon = dealer.is21();
 
 			if (!userWin && !dealerWon) {
 				do { // allows user to hit or fold until satisfied.
@@ -52,29 +58,30 @@ public class BlackJackApp {
 						Card c = deck.dealCard();
 						System.out.println("You are dealt: " + c);
 						player.setCardValue(player.getCardValue() + c.getValue());
-						System.out.println("New point value is " + player.getCardValue() + "pts");
+						System.out.println("New point value is " + player.getCardValue() + " pts");
 					}
 
-					userWin = checkFor21(player.getCardValue(), player);
-					userLost = checkForLostbyOver(player.getCardValue(), player);
-				} while (hitOrStay && !userLost && !userWin);
-			}
+				} while (hitOrStay && !player.is21() && !player.checkForBust());
+			 
 
-			if (!userLost && !userWin && !dealerWon) {
+			
+				if (!player.checkForBust() && !player.is21())
+				{// user either busted or stayed.
 
-				if (dealer.getCardValue() < player.getCardValue()) {
 					System.out.println("dealer value" + dealer.getCardValue());
 
-					while (!dealerWon && !dealerLost) {
+					while (!dealer.is21() && !dealer.checkForBust() && (dealer.getCardValue() < player.getCardValue())) {
 						Card c = deck.dealCard();
 						dealer.setCardValue(dealer.getCardValue() + c.getValue());
-						System.out.println("Dealer Hits:" + c.getValue());
-						dealerLost = checkForLostbyOver(dealer.getCardValue(), dealer);
-						dealerWon = checkFor21(dealer.getCardValue(), dealer);
+						System.out.println("Dealer Hits:" + c.getValue() + " Dealer Total: "+dealer.getCardValue());
+						dealerLost = dealer.checkForBust();
+						dealerWon = dealer.is21();
+						
 						if (!dealerWon && !dealerLost) {
 							if (dealer.getCardValue() > player.getCardValue()) {
 								System.out.println("dealer value" + dealer.getCardValue());
 								dealerWon = true;
+								System.out.println("Dealer Won");
 							}
 						}
 					}
@@ -84,10 +91,16 @@ public class BlackJackApp {
 						displayWinner(player.getCardValue(), dealer.getCardValue());
 					}
 				}
-			}
+				}
+			
 		} while (playAgain(kb));
 
 	}
+
+	private int placeBet() {
+		System.out.println("You have wagered $25");
+	return 25;
+}
 
 	private void displayWinner(int userValue, int dealerValue) {
 		// TODO Auto-generated method stub
@@ -98,27 +111,6 @@ public class BlackJackApp {
 		} else {
 			System.out.println("Tie game.  Chips returned.");
 		}
-	}
-
-//*******************************************************************************************
-	private boolean checkFor21(int value, Hand player) {
-		if (value == 21) {
-			System.out.println("21!" + player.getName() + "  has won!");
-			return true;
-		}
-
-		return false;
-	}
-
-//*******************************************************************************************
-	private boolean checkForLostbyOver(int value, Hand player) {
-		if (value > 21) {
-			System.out.println(value + " pts." + player.getName() + " has gone over!");
-
-			return true;
-		}
-
-		return false;
 	}
 
 //*****************************GAME Procedures*********************************************
@@ -134,7 +126,7 @@ public class BlackJackApp {
 		return player;
 	}
 //*****************************GAME Procedures*********************************************
-	private Hand dealTwoCards(Deck deck) {
+	private Player dealTwoCards(Deck deck) {
 		Player player = new Player();
 		deck.shuffle();
 		List<Card> tempHand = new ArrayList<>();
