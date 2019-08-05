@@ -2,7 +2,9 @@ package com.skilldistillery.enums.drills.cards;
 
 public class Player extends Hand {
 	
-
+public void player() {
+	
+}
 	
 	private int money;
 
