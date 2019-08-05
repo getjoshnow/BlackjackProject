@@ -20,7 +20,9 @@ public class BlackJackApp {
 		boolean winOrLose = false;
 		boolean hitOrStay = false;
 		boolean userLost = false;
+		boolean userWin =false;
 		boolean dealWinOrLose = false;
+		boolean dealerWon = false;
 		int value = 0;
 		boolean quit;
 		boolean dealerLost = false;
@@ -29,6 +31,9 @@ public class BlackJackApp {
 		List<Card> userHand = new ArrayList<>();
 		List<Card> dealerHand = new ArrayList<>();
 		Player player = new Player();
+		Dealer dealer = new Dealer();
+		player.setName(introduction(kb));
+		dealer.setName("Casino Dealer");
 
 		do {
 		deck.shuffle();
@@ -36,7 +41,6 @@ public class BlackJackApp {
 		int dealerValue = 0;
 			dealerHand.clear();
 			userHand.clear();
-			introduction();
 		for (int i = 0; i < 2; i++) { // two cards each
 			Card c = deck.dealCard();
 			userValue += c.getValue();
@@ -45,13 +49,15 @@ public class BlackJackApp {
 			dealerValue += c.getValue();
 			dealerHand.add(c);
 		}
-		System.out.println("Player is dealt:");
+		System.out.println(player.getName()+" is dealt:");
 		Dealing.printHandAndValue(userHand, userValue);
 		System.out.println("Dealer is dealt:");
 		Dealing.printHandAndValue(dealerHand, dealerValue);
-			checkForWinorLost(userValue);
+		userWin = checkForWinner(userValue, player);
+		dealerWon = checkForWinner(dealerValue, dealer);
+		
 
-			if (!checkForWinorLost(value)) {
+			if (!userWin && !dealerWon) {
 				do { // allows user to hit or fold until satisfied.
 					hitOrStay = getUserHit(kb);
 					if (hitOrStay) {
@@ -62,25 +68,29 @@ public class BlackJackApp {
 					}
 
 					System.out.println("Value is " + userValue);
-					userLost = checkForWinorLost(userValue);
-				} while (hitOrStay && !userLost);
+					userWin = checkForWinner(userValue, dealer);
+					userLost = checkForLost(userValue, dealer);
+				} while (hitOrStay && !userLost && !userWin);
 			}
 
-			if (!userLost) {
-				do {
+			if (!userLost && !userWin && !dealerWon) {
+			
+			while (dealerValue < 17 );
+				{
 					Card c = deck.dealCard();
 					dealerValue += c.getValue();
 					System.out.println("Dealer Hits:" + c.getValue());
 					dealerHand.add(c);
-					dealerLost = checkForWinorLost(dealerValue);
-				} while (dealerValue <= 16 && !dealerLost);
-
+					dealerLost = checkForLost(dealerValue, dealer);
+					dealerWon = checkForWinner(dealerValue,dealer);
+				}
 				if (dealerLost) {
 					System.out.println("Dealer has gone over with"+dealerValue+" pts, You have won!");
 				} else {
 					displayWinner(userValue, dealerValue);
 				}
 			}
+			
 		} while (playAgain(kb));
 
 	}
@@ -96,21 +106,11 @@ public class BlackJackApp {
 		}
 	}
 
-//*******************************************************************************************
-	private boolean checkForWinorLost(int value) {
-		if (checkForWinner(value)) {
-			return true;
-		}
-		if (checkForLost(value)) {
-			return true;
-		}
-
-		return false;
-	}
 
 //*******************************************************************************************
-	private boolean checkForWinner(int value) {
+	private boolean checkForWinner(int value, Hand player) {
 		if (value == 21) {
+			System.out.println("21!" + player.getName() +"  has won!");
 			return true;
 		}
 
@@ -118,8 +118,10 @@ public class BlackJackApp {
 	}
 
 //*******************************************************************************************
-	private boolean checkForLost(int value) {
+	private boolean checkForLost(int value, Hand player) {
 		if (value > 21) {
+			System.out.println(value+" pts."+ player.getName() +" has gone over!");
+
 			return true;
 		}
 
@@ -161,11 +163,13 @@ public class BlackJackApp {
 		case "stay":
 		case "Stay":
 		case "STAY":
+		case "s":
 			hit = false;
 			break;
 		case "Hit":
 		case "hit":
 		case "HIT":
+		case "h":
 
 			hit = true;
 			break;
@@ -195,9 +199,11 @@ public class BlackJackApp {
 		return quit;
 	}
 
-	private void introduction() {
+	private String introduction(Scanner kb) {
 		// TODO Auto-generated method stub
 		System.out.println("Welcome to BlackJack! ");
+		System.out.print("Enter your name :");
+		String input = kb.nextLine();
+		return input;
 	}
-
 }
