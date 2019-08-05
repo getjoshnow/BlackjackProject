@@ -1,7 +1,7 @@
 package com.skilldistillery.enums.drills.cards;
 
 public class Card {
-  private Rank rank;
+  private  Rank rank;
   private Suit suit;
   
   public Card(Rank rank, Suit suit) {
@@ -9,7 +9,7 @@ public class Card {
     this.suit = suit;
   }
   
-  public int getValue() {
+  public  int getValue() {
     return rank.getValue();
   }
 
