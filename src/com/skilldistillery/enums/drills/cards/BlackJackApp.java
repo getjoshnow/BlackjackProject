@@ -35,26 +35,28 @@ public class BlackJackApp {
 		player.setName(introduction(kb));
 		dealer.setName("Casino Dealer");
 
+
 		do {
 		deck.shuffle();
-		int userValue = 0;
-		int dealerValue = 0;
-			dealerHand.clear();
-			userHand.clear();
+		player.setCardValue(0); // reset
+		dealer.setCardValue(0); // reset
+		dealerHand.clear();
+		userHand.clear();
+		
 		for (int i = 0; i < 2; i++) { // two cards each
 			Card c = deck.dealCard();
-			userValue += c.getValue();
+			player.setCardValue( player.getCardValue() + c.getValue() );
 			userHand.add(c);
 			c = deck.dealCard();
-			dealerValue += c.getValue();
+			dealer.setCardValue( dealer.getCardValue() + c.getValue() );
 			dealerHand.add(c);
 		}
 		System.out.println(player.getName()+" is dealt:");
-		Dealing.printHandAndValue(userHand, userValue);
+		Dealing.printHandAndValue(userHand, player.getCardValue());
 		System.out.println("Dealer is dealt:");
-		Dealing.printHandAndValue(dealerHand, dealerValue);
-		userWin = checkForWinner(userValue, player);
-		dealerWon = checkForWinner(dealerValue, dealer);
+		Dealing.printHandAndValue(dealerHand, dealer.getCardValue());
+		userWin = checkForWinner(player.getCardValue(), player);
+		dealerWon = checkForWinner(dealer.getCardValue(), dealer);
 		
 
 			if (!userWin && !dealerWon) {
@@ -63,31 +65,31 @@ public class BlackJackApp {
 					if (hitOrStay) {
 						Card c = deck.dealCard();
 						System.out.println("You are dealt: " + c);
-						userValue += c.getValue();
+						player.setCardValue( player.getCardValue() + c.getValue() );
 						userHand.add(c);
 					}
 
-					System.out.println("Value is " + userValue);
-					userWin = checkForWinner(userValue, dealer);
-					userLost = checkForLost(userValue, dealer);
+					System.out.println("Value is " + player.getCardValue());
+					userWin = checkForWinner(player.getCardValue(), player);
+					userLost = checkForLost(player.getCardValue(), player);
 				} while (hitOrStay && !userLost && !userWin);
 			}
 
 			if (!userLost && !userWin && !dealerWon) {
 			
-			while (dealerValue < 17 );
+			while (dealer.getCardValue() < 17 );
 				{
 					Card c = deck.dealCard();
-					dealerValue += c.getValue();
+					dealer.setCardValue( dealer.getCardValue() + c.getValue() );
 					System.out.println("Dealer Hits:" + c.getValue());
 					dealerHand.add(c);
-					dealerLost = checkForLost(dealerValue, dealer);
-					dealerWon = checkForWinner(dealerValue,dealer);
+					dealerLost = checkForLost(dealer.getCardValue(), dealer);
+					dealerWon = checkForWinner(dealer.getCardValue(),dealer);
 				}
 				if (dealerLost) {
-					System.out.println("Dealer has gone over with"+dealerValue+" pts, You have won!");
+					System.out.println("Dealer has gone over with"+dealer.getCardValue()+" pts, You have won!");
 				} else {
-					displayWinner(userValue, dealerValue);
+					displayWinner(player.getCardValue(), dealer.getCardValue());
 				}
 			}
 			
