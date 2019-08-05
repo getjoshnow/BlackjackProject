@@ -23,14 +23,20 @@ public class BlackJackApp {
 		boolean dealWinOrLose = false;
 		int value = 0;
 		boolean quit;
+		boolean dealerLost = false;
 		Deck deck = new Deck();
 
 		List<Card> userHand = new ArrayList<>();
 		List<Card> dealerHand = new ArrayList<>();
+		Player player = new Player();
 
+		do {
 		deck.shuffle();
 		int userValue = 0;
 		int dealerValue = 0;
+			dealerHand.clear();
+			userHand.clear();
+			introduction();
 		for (int i = 0; i < 2; i++) { // two cards each
 			Card c = deck.dealCard();
 			userValue += c.getValue();
@@ -39,59 +45,63 @@ public class BlackJackApp {
 			dealerValue += c.getValue();
 			dealerHand.add(c);
 		}
+		System.out.println("Player is dealt:");
 		Dealing.printHandAndValue(userHand, userValue);
-		do {
-		checkForWinorLost(userValue);
+		System.out.println("Dealer is dealt:");
+		Dealing.printHandAndValue(dealerHand, dealerValue);
+			checkForWinorLost(userValue);
 
-		if (!checkForWinorLost(value)) {
-			do { // allows user to hit or fold until satisfied.
-				hitOrStay = getUserHit(kb);
-				if (hitOrStay) {
+			if (!checkForWinorLost(value)) {
+				do { // allows user to hit or fold until satisfied.
+					hitOrStay = getUserHit(kb);
+					if (hitOrStay) {
+						Card c = deck.dealCard();
+						System.out.println("You are dealt: " + c);
+						userValue += c.getValue();
+						userHand.add(c);
+					}
+
+					System.out.println("Value is " + userValue);
+					userLost = checkForWinorLost(userValue);
+				} while (hitOrStay && !userLost);
+			}
+
+			if (!userLost) {
+				do {
 					Card c = deck.dealCard();
-					userValue += c.getValue();
-					userHand.add(c);
+					dealerValue += c.getValue();
+					System.out.println("Dealer Hits:" + c.getValue());
+					dealerHand.add(c);
+					dealerLost = checkForWinorLost(dealerValue);
+				} while (dealerValue <= 16 && !dealerLost);
+
+				if (dealerLost) {
+					System.out.println("Dealer has gone over with"+dealerValue+" pts, You have won!");
+				} else {
+					displayWinner(userValue, dealerValue);
 				}
+			}
+		} while (playAgain(kb));
 
-				System.out.println("Value is " + userValue);
-				userLost = checkForWinorLost(userValue);
-			} while (hitOrStay && !userLost);
-		}
-
-		if (!userLost) {
-			do {
-				Card c = deck.dealCard();
-				dealerValue += c.getValue();
-				dealerHand.add(c);
-				}while (dealerValue >= 16); 
-			
-		}
-		displayWinner(userValue, dealerValue); 
-
-	}while(playAgain(kb));
-		 
-	
 	}
-	
 
-private void displayWinner(int userValue, int dealerValue) {
-	// TODO Auto-generated method stub
-	if (userValue > dealerValue){
-		System.out.println("User wins");
+	private void displayWinner(int userValue, int dealerValue) {
+		// TODO Auto-generated method stub
+		if (userValue > dealerValue) {
+			System.out.println("Player wins with "+userValue + " versus dealer "+ dealerValue);
+		} else if (userValue < dealerValue) {
+			System.out.println("Dealer wins with "+dealerValue + " versus Player "+userValue );
+		} else {
+			System.out.println("Tie game.  Chips returned.");
+		}
 	}
-	else if (userValue > dealerValue) {
-		System.out.println("Dealer wins");
-	} else {
-		System.out.println("Dealer wins");
-}
-}
+
 //*******************************************************************************************
 	private boolean checkForWinorLost(int value) {
 		if (checkForWinner(value)) {
-			System.out.println("you have won." + value + "pts");
 			return true;
 		}
 		if (checkForLost(value)) {
-			System.out.println("you have lost." + value + "pts");
 			return true;
 		}
 
