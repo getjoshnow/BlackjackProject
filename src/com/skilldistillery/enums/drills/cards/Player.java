@@ -1,5 +1,5 @@
 package com.skilldistillery.enums.drills.cards;
 
-public class abstract Hand {
+public class Player extends Hand {
 
 }

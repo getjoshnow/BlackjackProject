@@ -1,11 +1,14 @@
 package com.skilldistillery.enums.drills.cards;
 
 
-public class BlackJackHand extends AbstractHand {
+public class BlackJackHand extends Hand {
 
 }
-@Override
 public int getHandValue() {
 	
 	return 0;
+}
+public List getHand() {
+
+	return List;
 }
