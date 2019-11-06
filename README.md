@@ -17,7 +17,7 @@ This program stretched my programing designs to have the objects associated with
 ### Attack Plan 
 Building upon UML diagram given, my first approach was to find the fastest way to accomplish the goal of creating a command-line Blackjack.  This proved wasteful, as I wrote too much code that I ended up encapsulated later.  I then switched to Object Oriented programing and assigned values into each class and utilized inheritance.  This helped in the process of writing the code once and then giving properties to all players at the blackjack table.
 
-###Wish List Additions
+### Wish List Additions
 I would like to have more players at the Blackjack table. Currently, there is only the computer and the user. Also, implment extended rules of Blackjack such as splitting the cards to make multiple hands or multiple form of betting.
 
 Overall, I'm happy with the project and its use of interfacing.
